@@ -1,0 +1,227 @@
+\documentclass[lang = cn]{elegantpaper}
+\usepackage{amsmath,bm}
+\usepackage{amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{pythonhighlight}
+\usepackage {xeCJK}
+\title{约束最优化}
+\author{Atri}
+\begin{document}
+\maketitle
+\section{等式约束}
+\subsection{一般形式}
+\noindent
+等式约束问题的一般形式:
+\begin{equation*}
+\begin{aligned}
+    \min_{\bm{x}\in\mathbb{R}^n} \quad &f(\bm{x})\\
+    \mathrm{s.t.}\quad &h_i(\bm{x})=0,i=1,\cdots,m,\operatorname{or}i\in \mathcal{E} 
+\end{aligned}
+\end{equation*}
+\subsection{可行域}
+\noindent
+可行域: 满足所有约束条件的点所组成的集合.
+\begin{equation*}
+    D = \left\{\bm{x}\in\mathbb{R}^n|h_i(\bm{x})=0,i\in \mathcal{E}\right\}.
+\end{equation*}
+\subsection{极值点}
+\noindent
+局部极小值点: 设 $\bm{x}^{*} \in D$, 对于任何满足 $\|\bm{x}-\bm{x}^{*}\| < \epsilon, \epsilon \rightarrow 0$ 的 $\bm{x} \in D$, 都有
+\begin{equation*}
+    f(\bm{x}) \ge f(\bm{x}^{*}),
+\end{equation*}
+则称 $\bm{x}^{*}$ 为局部极小值点.\\
+全局极小值点: 顾名思义.\\
+若不等号严格成立, 则为严格局部or全局极小值点.
+\subsection{一阶条件}
+\noindent
+令 $\bm{\lambda} = (\lambda_1;\cdots;\lambda_m)$, 构造拉格朗日函数
+\begin{equation*}
+    L(\bm{x},\bm{\lambda})=f(\bm{x}) + \sum_{i=1}^m \lambda_i h_i(\bm{x}) = f(\bm{x}) + \bm{\lambda}^\top \bm{h}(\bm{x}).
+\end{equation*}
+给出一阶KKT or 拉格朗日条件:
+\begin{equation*}
+\begin{aligned}
+    &\nabla_{\bm{x}} L(\bm{x}^{*},\bm{\lambda}^{*}) = \nabla f(\bm{x}^{*}) + \sum_{i=1}^m \lambda_i^{*}\nabla h_i(\bm{x}^{*}) = 0.\\
+    &h_i(\bm{x}^{*})=0, i \in \mathcal{E}.
+\end{aligned}
+\end{equation*}
+这给出了极小值点所应满足的必要条件, 其前提是向量组 $(\nabla h_1(\bm{x}),\cdots,\nabla h_m(\bm{x}))$ 在点 $\bm{x}^{*}$ 线性独立, 对应于 $h(\bm{x})$ 的Jacobi矩阵 $\nabla \bm{h}(\bm{x})$ 列满秩.
+\subsection{二阶条件}
+\noindent
+Lagrange 函数对 $\bm{x}$ 的Hessian矩阵:
+\begin{equation*}
+    \nabla_{\bm{x}}^2 L(\bm{x},\bm{\lambda}) = \nabla^2 f(\bm{x}) + \sum_{i=1}^m \lambda_i \nabla^2 h_i(\bm{x}).
+\end{equation*}
+\begin{theorem}
+    设 $\bm{x}^{*}$ 是 f 在约束条件 $\bm{h}(\bm{x})=0$ 的局部极小值点, $\bm{h}:\mathbb{R}^n \rightarrow \mathbb{R}^m,m \le n$, f, $\bm{h}$ 是二阶连续可微函数. 如果 $\bm{x}^{*}$ 处 $\bm{h}$ 的Jacobi矩阵是非退化的, 则存在 $\bm{\lambda}^{*} \in \mathbb{R}^m$ 使得
+\begin{itemize}
+    \item 一阶条件:
+\begin{equation*}
+    \nabla_{\bm{x}} L(\bm{x}^{*},\bm{\lambda}^{*}) = 0.
+\end{equation*}
+    \item 二阶必要条件: 对任意切向量 $\forall \bm{y} \in T(\bm{x}^{*})$, 都有
+\begin{equation*}
+    \bm{y}^\top \nabla_{\bm{x}}^2 L(\bm{x}^{*},\bm{\lambda}^{*})\bm{y} \ge 0.
+\end{equation*}
+    
+\end{itemize}
+\end{theorem}
+\noindent
+二阶充分条件: 若上述不等式严格成立, 则 $\bm{x}^{*}$ 是 f 在约束条件下的严格局部极小值点.
+\subsection{求解步骤}
+\noindent
+使用KKT条件计算最优性条件:
+\begin{itemize}
+    \item 首先, 写出Lagrange函数, 分别计算其对 $\bm{x}$ 与 $\bm{\lambda}$ 的梯度以及对 $\bm{x}$ 的Hessian矩阵.
+    \item 由一阶条件计算确定最优点 $(\bm{x},\bm{\lambda})$ 所满足的基本条件.
+\end{itemize}
+在此基础上:
+\begin{itemize}
+    \item 首先确定最优点 $(\bm{x}^{*},\bm{\lambda}^{*})$ 处, 约束 $\bm{h}(\bm{x}) = 0$ 的切空间:
+\begin{equation*}
+    T(\bm{x}^{*}) = \left\{\bm{y} \in \mathbb{R}^n|\nabla_{\bm{x}}\bm{h}(\bm{x}^{*})^\top \bm{y}=0\right\}.
+\end{equation*}
+    \item 判断, 对于 $\forall \bm{y} \in T(\bm{x}^{*})$, 是否有 $\bm{y}^\top \nabla_{\bm{x}}^2\bm{h}(\bm{x}^{*})\bm{y} > 0$.
+\end{itemize}
+\section{不等式约束}
+\subsection{一般形式}
+\noindent
+约束问题的一般形式:
+\begin{equation*}
+    \begin{aligned}
+        \min_{\bm{x}\in\mathbb{R}^n} \quad &f(\bm{x})\\
+        \mathrm{s.t.}\quad &c_i(\bm{x})=0,\;i\in \mathcal{E} \\
+        &c_j(\bm{x}) \le 0,\;j\in \mathcal{I}.
+    \end{aligned}
+\end{equation*}
+定义域为: $D = \operatorname{dom}(f)\cap_{i \in \mathcal{E}} \operatorname{dom}(c_i)\cap_{i \in \mathcal{I}} \operatorname{dom}(c_j)$.
+\begin{itemize}
+    \item $c_i(\bm{x}),i \in \mathcal{E}$ 每个等式约束刻画了一个 $n-1$ 维曲面.
+    \item $c_j(\bm{x}),j \in \mathcal{I}$ 不等式约束刻画了一个 $n$ 维空间的区域.
+\end{itemize}
+\subsection{有效约束}
+\noindent
+\begin{definition}
+    对任何 $\bm{x} \in \mathbb{R}^n$, 点 $\bm{x}$ 处的有效约束集为:
+\begin{equation*}
+    \mathcal{A} (\bm{x}) = \mathcal{E} \cup \mathcal{I}(\bm{x}),\quad \mathcal{I}(\bm{x}):=\left\{j|h_j(\bm{x})=0,j\in\mathcal{I}\right\}.
+\end{equation*}
+\end{definition}
+\noindent
+对于定义域内某点 $\bm{x}$ 满足 $h_j(\bm{x}) \neq 0$ 的约束为该点的非有效约束. 即至少在这个点附近区域内没有限制的效果.
+\subsection{可行集与切锥}
+\noindent
+可行方向: 设 $\bm{x}$ 是约束优化问题的一个可行点, 对于 $\bm{d} \in \mathbb{R}^n,\bm{d} \neq 0$, 如果存在 $\alpha > 0$ 使得
+\begin{equation*}
+    \bm{x} + \beta \bm{d} \in D,\; \beta \in [0,\alpha]
+\end{equation*}
+则称 $\bm{d}$ 为 $\bm{x}$ 处的可行方向.\\
+$\bm{x}$ 处所有可行方向的集合记为 $FD(\bm{x})$.\\
+切锥: 在\textbf{最优化计算方法}这本书中, 上述可行方向也称为切向量(这很反常), 更严谨的定义如下:
+\begin{definition}
+    给定可行域$\mathcal{X}$及其内一点 $\bm{x}$, 若存在可行序列 $\left\{\bm{z}_k\right\}_{k=1}^\infty\subset \mathcal{X}$ 逼近 $\bm{x}$ (即 $\lim_{k \rightarrow \infty} \bm{z}_k = \bm{x}$) 以及正标量序列$\left\{t_k\right\}_{k=1}^\infty,\;t_k \rightarrow 0$ 满足
+\begin{equation*}
+    \lim_{k \rightarrow \infty} \frac{\bm{z}_k - \bm{x}}{t_k} = \bm{d},
+\end{equation*}
+    则称向量 $\bm{d}$ 为 $\mathcal{X}$ 在点 $\bm{x}$ 处的一个切向量. 点 $\bm{x}$ 处的所有切向量的集合称为\textbf{切锥}, 用 $T_\mathcal{X}(\bm{x})$ 表示.
+\end{definition}
+\noindent
+定义层面上, $T_\mathcal{X}(\bm{x}) = FD(\bm{x})$.\\
+根据可行方向与极小值的定义, 可以得出不等式约束问题的几何最优性条件:
+\begin{theorem}
+    假设可行点 $\bm{x}^{*}$ 是不等式约束最优化问题的一个局部极小点. 如果 $f(\bm{x})$ 和 $c_i(\bm{x}), i \in \mathcal{I} \cup \mathcal{E}$ 在点 $\bm{x}^{*}$ 处是可微的, 那么
+\begin{equation*}
+    \bm{d}^\top \nabla f(\bm{x}^{*}) \ge 0,\quad \bm{d} \in T_\mathcal{X}(\bm{x})
+\end{equation*}
+等价于
+\begin{equation*}
+    T_\mathcal{X}(\bm{x}) \cap \left\{\bm{d}|\bm{d}^\top \nabla f(\bm{x}^{*}) < 0\right\} = \varnothing .
+\end{equation*}
+\end{theorem}
+\subsection{线性化可行方向锥}
+\noindent
+对于可行点 $\bm{x} \in \mathcal{X}$, 其线性化可行方向锥为
+\begin{equation*}
+    \mathcal{F}(\bm{x}) = \left\{\bm{d}|\bm{d}^\top\nabla c_i(\bm{x})=0,i\in\mathcal{E},\; \bm{d}^\top\nabla c_j(\bm{x})\le0,j\in\mathcal{A}(\bm{x})\cap \mathcal{I}\right\}.
+\end{equation*}
+直观理解:
+\begin{itemize}
+    \item 线性化的含义是: 通过对约束函数值的一阶线性信息得到可行方向的另一个定义.
+    \item 对于等式约束, 方向 $\bm{d}$ 不改变等式约束函数值.
+    \item 对于不等式约束, 方向 $\bm{d}$ 可能使不等式约束函数值得到优化.
+    \item 对非有效约束, 不管它.
+\end{itemize}
+很不幸的是, 线性化可行方向锥并不完全等价于切锥(或者可行方向集), 事实上,有如下结论:
+\begin{equation*}
+    T_{\mathcal{X}}(\bm{x}) \subseteq \mathcal{F}(\bm{x}).
+\end{equation*}
+\subsection{约束品性}
+\begin{definition}
+    给定可行点 $\bm{x}$ 及相应的积极集 $\mathcal{A}(\bm{x})$. 如果积极集对应的约束函数的梯度 $\nabla c_i(\bm{x}), i\in\mathcal{A}(\bm{x})$ 是线性无关的, 则\textbf{线性无关约束品性}(LICQ)在点 $\bm{x}$ 处成立.
+\end{definition}
+\noindent
+然而, 课上给出了一个等价条件: $\forall i\in \mathcal{A}(\bm{x})$, 都有 $\nabla c_i(\bm{x}) \neq 0$. 显然我不知道为什么可以这样, 个人感觉不应该是等价条件.\\
+顺带一提, 满足LICQ的点称为正则点, 在EqCons的讨论中也有涉及到.\\
+对于所有约束函数都是线性函数的时候, 我们可以认为它们的梯度在任何点都是一致的, 如果一个点是正则点, 那么所有的点都是正则点, 因此默认这种情况下 $T_\mathcal{X}(\bm{x}) = \mathcal{F}(\bm{x})$. 当然, 最优化计算方法中没有讨论约束本身可以线性相关的情况, 这种情况应该很少, 默认不会出现.
+\subsection{一阶条件(KKT)}
+\begin{theorem}
+    假设 $\bm{x}^{*}$ 是不等式约束最优化问题的一个局部极小点, 如果
+\begin{equation*}
+    T_\mathcal{X}(\bm{x}^{*}) = \mathcal{F}(\bm{x}^{*})
+\end{equation*}
+    成立, 那么存在拉格朗日乘子 $\bm{\lambda}^{*}$ 使得如下条件成立:
+\begin{equation*}
+\begin{aligned}
+    &\nabla_{\bm{x}}L(\bm{x}^{*},\bm{\lambda}^{*}) = \nabla f(\bm{x}^{*}) + \sum_{i \in \mathcal{I} \cup \mathcal{E}} \lambda_i^{*} \nabla c_i(\bm{x}^{*}) = 0,\\
+    &c_i(\bm{x}^{*}) = 0, \forall i \in \mathcal{E},\\
+    &c_i(\bm{x}^{*}) \le 0, \forall i \in \mathcal{I},\\
+    &\lambda_i^{*} \ge 0, \forall i \in \mathcal{I},\\
+    &\lambda_i^{*}c_i(\bm{x}^{*}) = 0, \forall i \in \mathcal{I}.
+\end{aligned}
+\end{equation*}
+\end{theorem}
+\noindent
+可以使用 Farkas 引理推出.\\
+值得注意的是, 如果前置条件 $T_\mathcal{X}(\bm{x}^{*}) = \mathcal{F}(\bm{x}^{*})$ 不满足, 那么 $\bm{x}^{*}$ 不一定是KKT点. 同样地, 因为KKT条件只是必要的, 我们还需引出二阶条件来判断局部最优性.
+\subsection{二阶条件}
+\begin{definition}
+    设 $(\bm{x}^{*},\bm{\lambda}^{*})$ 满足KKT条件, 定义临界锥为
+\begin{equation*}
+    \mathcal{C}(\bm{x}^{*},\bm{\lambda}^{*}) = \left\{\bm{d}\in \mathcal{F}(\bm{x}^{*})|\bm{d}^\top\nabla c_i(\bm{x}^{*})=0,\forall i \in \mathcal{A}(\bm{x}^{*}) \cap \mathcal{I}\;\mathrm{and}\;\lambda_i^{*} > 0\right\}
+\end{equation*}
+\end{definition}
+\noindent
+事实上, 由于临界锥是线性化可行方向锥的子集, 它对等式约束也满足上述条件, 因此有:
+\begin{equation*}
+    \bm{d} \in \mathcal{C}(\bm{x}^{*},\bm{\lambda}^{*}) \Rightarrow \lambda_i^{*}\nabla c_i(\bm{x}^{*})^\top \bm{d} = 0,\quad \forall i \in \mathcal{E} \cup \mathcal{I}.
+\end{equation*}
+\begin{theorem}
+    假设 $\bm{x}^{*}$ 是约束优化问题的一个局部极小值点, 且线性独立约束条件成立, $(\bm{x}^{*},\bm{\lambda}^{*})$ 满足KKT条件, 则
+\begin{equation*}
+    \bm{d}^\top \nabla_{\bm{x}}^2 L(\bm{x}^{*},\bm{\lambda}^{*})\bm{d} \ge 0,\quad \forall\bm{d}\in \mathcal{C}(\bm{x}^{*},\bm{\lambda}^{*}),\: \bm{d} \neq 0.
+\end{equation*}
+\end{theorem}
+\begin{theorem}
+    假设在可行点 $\bm{x}^{*}$ 处, $(\bm{x}^{*},\bm{\lambda}^{*})$ 满足KKT条件, 如果
+\begin{equation*}
+    \bm{d}^\top \nabla_{\bm{x}}^2 L(\bm{x}^{*},\bm{\lambda}^{*})\bm{d} > 0,\quad \forall\bm{d}\in \mathcal{C}(\bm{x}^{*},\bm{\lambda}^{*}),\: \bm{d} \neq 0.
+\end{equation*}
+    那么 $\bm{x}^{*}$ 是约束优化问题的一个严格局部极小值.
+\end{theorem}
+\noindent
+与等式约束的二阶条件一样, 充分条件和必要条件之间的区别是不等式是否严格成立.
+\subsection{求解步骤}
+\noindent
+\begin{itemize}
+    \item 列出一阶KKT条件.
+    \item 计算KKT点(常见做法是分类: $\lambda_i = 0$ 或者 $c_i(\bm{x}^{*}) = 0$).
+    \item 判断是否是正则点(是否满足LICQ, 可以首先判断是否满足约束条件的梯度为0).
+    \item 对每个KKT点, 求出Lagrange函数对 $\bm{x}$ 的Hessian矩阵以及 $\bm{x}^{*}$ 对应的切锥, 验证是否满足二阶充分条件.
+\end{itemize}
+可以发现这些步骤是包含等式约束题目的求解步骤的.
+\subsection{拓展}
+\noindent
+ICPC竞赛中遇到的一道C++矩阵求逆板子题(python不允许使用numpy库): https://ac.nowcoder.com/acm/contest/55992/D\\
+其核心就是不等式约束的KKT条件.
+\end{document}

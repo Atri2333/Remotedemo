@@ -1,0 +1,29 @@
+\documentclass[lang = cn]{elegantpaper}
+\usepackage{amsmath,bm}
+\usepackage{amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{pythonhighlight}
+\usepackage {xeCJK}
+\title{负梯度方向优化方法总结}
+\author{Atri}
+\begin{document}
+\maketitle
+
+\section{无约束条件优化}
+
+求解一般形式的无约束条件优化问题：
+\begin{equation*}
+    \min_{\bm{x}\in \mathbb{R}^n} f(\bm{x})
+\end{equation*}
+
+使用迭代的方式进行搜索：
+\begin{equation*}
+    \bm{x}_{k+1} = \bm{x}_k + \alpha_k\bm{d}_k, \alpha_k > 0
+\end{equation*}
+
+因此可以将问题大致分为两类：寻找步长 $\alpha_k$ 以及下降方向 $\bm{d}_k$.
+\subsection{梯度相关}
+\input{Gradient Descent.tex}
+
+
+\end{document}
